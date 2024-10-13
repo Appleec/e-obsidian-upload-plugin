@@ -43,7 +43,7 @@ const context = await esbuild.context({
 	// outfile: "main.js",
 	outfile: prod ? './dist/main.js' : './main.js',
 	minify: prod,
-	plugins: [
+	plugins: prod ? [
 		prod && copyStaticFiles({
 			src: './manifest.json',
 			dest: './dist/manifest.json'
@@ -52,7 +52,7 @@ const context = await esbuild.context({
 			src: './styles.css',
 			dest: './dist/styles.css'
 		})
-	]
+	] : []
 });
 
 if (prod) {

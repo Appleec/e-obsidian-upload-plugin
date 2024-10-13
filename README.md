@@ -98,4 +98,6 @@ See https://github.com/obsidianmd/obsidian-api
 ## References
 
 - [obsidian-image-upload-toolkit](https://github.com/addozhang/obsidian-image-upload-toolkit)
-- 
+- [obsidian-image-uploader](https://github.com/Creling/obsidian-image-uploader)
+- [obsidian-image-auto-upload-plugin](https://github.com/renmu123/obsidian-image-auto-upload-plugin)
+- [obsidian-image-uploader](https://github.com/sancijun/obsidian-image-uploader)
