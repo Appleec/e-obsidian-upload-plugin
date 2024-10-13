@@ -1,6 +1,7 @@
 import esbuild from "esbuild";
 import process from "process";
 import builtins from "builtin-modules";
+import copyStaticFiles from "esbuild-copy-static-files";
 
 const banner =
 `/*
@@ -15,7 +16,7 @@ const context = await esbuild.context({
 	banner: {
 		js: banner,
 	},
-	entryPoints: ["main.ts"],
+	entryPoints: ["./src/main.ts"],
 	bundle: true,
 	external: [
 		"obsidian",
@@ -33,12 +34,25 @@ const context = await esbuild.context({
 		"@lezer/lr",
 		...builtins],
 	format: "cjs",
+	// watch: !prod,
 	target: "es2018",
 	logLevel: "info",
 	sourcemap: prod ? false : "inline",
 	treeShaking: true,
-	outfile: "main.js",
+	// outdir: './dist',
+	// outfile: "main.js",
+	outfile: prod ? './dist/main.js' : './main.js',
 	minify: prod,
+	plugins: [
+		prod && copyStaticFiles({
+			src: './manifest.json',
+			dest: './dist/manifest.json'
+		}),
+		prod && copyStaticFiles({
+			src: './styles.css',
+			dest: './dist/styles.css'
+		})
+	]
 });
 
 if (prod) {

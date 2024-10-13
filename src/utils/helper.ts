@@ -42,11 +42,16 @@ export default class Helper {
 	}
 	getValue() {
 		const editor = this.getEditor();
-		return editor.getValue();
+		if (editor) {
+			return editor.getValue();
+		} else {
+			return "";
+		}
 	}
 
 	setValue(value: string) {
-		const editor = this.getEditor();
+		const editor: any = this.getEditor();
+
 		const { left, top } = editor.getScrollInfo();
 		const position = editor.getCursor();
 
@@ -57,7 +62,8 @@ export default class Helper {
 
 	// get all file urls, include local and internet
 	getAllFiles(): Image[] {
-		const editor = this.getEditor();
+		const editor: any = this.getEditor();
+
 		let value = editor.getValue();
 		return this.getImageLink(value);
 	}
