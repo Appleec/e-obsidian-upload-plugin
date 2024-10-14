@@ -1,5 +1,4 @@
 import {
-	App,
 	Editor,
 	MarkdownView,
 	Notice,
@@ -44,7 +43,14 @@ const DEFAULT_SETTINGS: IUploadPluginSettings = {
 		apiReqBody: "{\"file\": \"$FILE\"}",
 		imgUrlPath: "",
 		imgUrlPrefix: "",
-	}
+	},
+	haloSetting: {
+		apiURL: "",
+		apiReqHeader: "",
+		apiReqBody: "{\"file\": \"$FILE\"}",
+		imgUrlPath: "",
+		imgUrlPrefix: "",
+	},
 }
 
 class UploadPlugin extends Plugin {
@@ -63,7 +69,9 @@ class UploadPlugin extends Plugin {
 
 		// 赋值
 		this.helper = new Helper(this.app);
-		this.uploader = uploader(this.settings);
+
+		// 初始化设置 uploader
+		this.setupUploader();
 
 		// 图标
 		addIcon(
@@ -150,7 +158,7 @@ class UploadPlugin extends Plugin {
 
 	// 自定义方法
 	// 右键菜单上传文件
-	async menuUploadFile(file: TFile) {
+	async menuUploadFileTest(file: TFile) {
 		new Notice('准备上传');
 
 		let content = this.helper.getValue();
@@ -232,6 +240,93 @@ class UploadPlugin extends Plugin {
 			});
 	}
 
+	async menuUploadFile(file: TFile) {
+		if (!file) {
+			new Notice('不合法文件，请重新尝试');
+			return;
+		}
+		if (!this.uploader) {
+			new Notice("未配置上传器，请检查设置");
+			return;
+		}
+
+		new Notice('准备上传');
+
+		let content = this.helper.getValue();
+		const basePath = this.helper.getBasePath();
+		const fileArray = this.helper.getAllFiles();
+
+		let imageList: IImage[] = [];
+
+		// 查找文档中相同路径文件
+		for (const match of fileArray) {
+			const imageName = match.name;
+			const encodedUri = match.path;
+
+			const fileName = basename(decodeURI(encodedUri));
+
+			if (file && file.name === fileName) {
+				const abstractImageFile = join(basePath, file.path);
+
+				if (isAssetTypeAnImage(abstractImageFile)) {
+					imageList.push({
+						path: abstractImageFile,
+						name: imageName,
+						source: match.source,
+					});
+				}
+			}
+		}
+
+		if (imageList.length === 0) {
+			new Notice("没有匹配到文件");
+			return;
+		}
+
+		const files = [];
+
+		// 通过文件路径读取文件，并转化为文件格式
+		for (let i = 0; i < imageList.length; i++) {
+			const { path, name } = imageList[i];
+			const fileName = basename(decodeURI(path));
+			const buffer: Buffer = await new Promise((resolve, reject) => {
+				readFile(path, (err, data) => {
+					if (err) {
+						reject(err);
+					}
+					resolve(data);
+				});
+			});
+			const arrayBuffer = bufferToArrayBuffer(buffer);
+			files.push(new File([arrayBuffer], fileName));
+		}
+
+		if (files.length === 0) {
+			new Notice("文件读取失败");
+			return;
+		}
+
+		// 通过uploader上传文件
+		this.uploader.upload(files[0])
+			.then(res => {
+				// 文件上传成功后，替换文档中相同路径文件的link
+				imageList.map(item => {
+					content = content.replaceAll(
+						item.source,
+						`![](${res})`
+					);
+				});
+
+				// 更新文档
+				this.helper.setValue(content);
+
+				new Notice("上传成功");
+			})
+			.catch(err => {
+				new Notice(`上传失败: ${err}`);
+			});
+	}
+
 	// 注册右键菜单事件
 	registerMenuEvent() {
 		this.registerEvent(
@@ -255,6 +350,15 @@ class UploadPlugin extends Plugin {
 				}
 			)
 		);
+	}
+
+	// 设置 uploader
+	setupUploader() {
+		try {
+			this.uploader = uploader(this.settings);
+		} catch (e) {
+			console.log(`设置 Uploader 失败: ${e}`);
+		}
 	}
 }
 

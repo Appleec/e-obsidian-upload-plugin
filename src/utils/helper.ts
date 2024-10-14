@@ -1,4 +1,4 @@
-import { MarkdownView, App } from "obsidian";
+import { MarkdownView, App, TFile, FileSystemAdapter } from "obsidian";
 import { parse } from "path";
 
 interface Image {
@@ -118,5 +118,15 @@ export default class Helper {
 		const domain = url.hostname;
 
 		return blackDomainList.some(blackDomain => domain.includes(blackDomain));
+	}
+
+	async readBinary(file: TFile) {
+		return this.app.vault.readBinary(file);
+	}
+
+	getBasePath() {
+		return (
+			this.app.vault.adapter as FileSystemAdapter
+		).getBasePath()
 	}
 }

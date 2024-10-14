@@ -60,8 +60,9 @@ class UploadSettingsTab extends PluginSettingTab {
 				e.setValue(this.plugin.settings.mode)
 				e.onChange(async value => {
 					this.plugin.settings.mode = value;
+					// NOTE: 重新设置uploader
+					this.plugin.setupUploader();
 					await this.plugin.saveSettings();
-
 					await this.drawModeSettings(this.modeDiv, value);
 				})
 			})
@@ -75,6 +76,9 @@ class UploadSettingsTab extends PluginSettingTab {
 		switch (args) {
 			case 'lsky':
 				this.drawLskySettings(parentEl);
+				break;
+			case 'halo':
+				this.drawHaloSettings(parentEl);
 				break;
 			case 'github':
 				this.drawGithubSettings(parentEl);
@@ -177,6 +181,103 @@ class UploadSettingsTab extends PluginSettingTab {
 					.onChange(async (value) => {
 						try {
 							this.plugin.settings.lskySetting.imgUrlPrefix = value;
+							await this.plugin.saveSettings();
+						}
+						catch (e) {
+							console.log(e)
+						}
+					})
+			})
+	}
+
+	// Halo 设置
+	private drawHaloSettings(parentEL: HTMLDivElement) {
+		// Api URL
+		new Setting(parentEL)
+			.setName("API 地址")
+			.setDesc("请求地址")
+			.addText(text => {
+				text
+					.setPlaceholder("")
+					.setValue(this.plugin.settings.haloSetting.apiURL)
+					.onChange(async (value) => {
+						try {
+							this.plugin.settings.haloSetting.apiURL = value;
+							await this.plugin.saveSettings();
+						}
+						catch (e) {
+							console.log(e)
+						}
+					})
+			})
+
+		// Api request header
+		new Setting(parentEL)
+			.setName("POST Header")
+			.setDesc("请求头，json 格式")
+			.addTextArea((text) => {
+				text.setPlaceholder("输入合法的请求头")
+					.setValue(this.plugin.settings.haloSetting.apiReqHeader)
+					.onChange(async (value) => {
+						try {
+							this.plugin.settings.haloSetting.apiReqHeader = value;
+							await this.plugin.saveSettings();
+						}
+						catch (e) {
+							console.log(e)
+						}
+					})
+				text.inputEl.rows = 5
+				text.inputEl.cols = 40
+			})
+
+		// Api request body
+		new Setting(parentEL)
+			.setName("POST Body")
+			.setDesc("请求体，json 格式")
+			.addTextArea((text) => {
+				text.setPlaceholder("输入合法的请求体")
+					.setValue(this.plugin.settings.haloSetting.apiReqBody)
+					.onChange(async (value) => {
+						try {
+							this.plugin.settings.haloSetting.apiReqBody = value;
+							await this.plugin.saveSettings();
+						}
+						catch (e) {
+							console.log(e)
+						}
+					})
+				text.inputEl.rows = 5
+				text.inputEl.cols = 40
+			})
+		new Setting(parentEL)
+			.setName("图片 URL 路径")
+			.setDesc("返回json数据中的图片URL字段的路径，如：data/pathname")
+			.addText(text => {
+				text
+					.setPlaceholder("")
+					.setValue(this.plugin.settings.haloSetting.imgUrlPath)
+					.onChange(async (value) => {
+						try {
+							this.plugin.settings.haloSetting.imgUrlPath = value;
+							await this.plugin.saveSettings();
+						}
+						catch (e) {
+							console.log(e)
+						}
+					})
+			})
+
+		new Setting(parentEL)
+			.setName("图片 URL 前缀")
+			.setDesc("可选，当填入时，URL = 前缀 + 图片的路径值")
+			.addText(text => {
+				text
+					.setPlaceholder("")
+					.setValue(this.plugin.settings.haloSetting.imgUrlPrefix)
+					.onChange(async (value) => {
+						try {
+							this.plugin.settings.haloSetting.imgUrlPrefix = value;
 							await this.plugin.saveSettings();
 						}
 						catch (e) {

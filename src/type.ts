@@ -22,8 +22,16 @@ export interface IUploadPluginSettings {
 	imgUrlPrefix: string;
 
 	lskySetting: ILskySettings;
+	haloSetting: ILskySettings;
 }
 
 export interface IUploader {
-	upload(file: File, fullPath?: string): Promise<string>;
+	upload(file: File | IMedia, options?: Record<any, any>): Promise<string>;
 }
+
+export interface IMedia {
+	mimeType: string;
+	fileName: string;
+	content: ArrayBuffer;
+}
+export type SafeAny = any; // eslint-disable-line @typescript-eslint/no-explicit-any

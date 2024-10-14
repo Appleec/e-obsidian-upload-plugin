@@ -1,26 +1,27 @@
 // Defaults
-import { IUploadPluginSettings } from "./type";
+import { IUploadPluginSettings, IUploader } from "./type";
 import axios from "axios";
 import objectPath from "object-path";
+import {Notice} from "obsidian";
 
-class LskyUpload {
+class LskyUpload implements IUploader {
 	private readonly settings: IUploadPluginSettings;
 
 	constructor(settings: IUploadPluginSettings) {
 		this.settings = settings;
 	}
 
-	async upload(file: File, fullPath?: string): Promise<string> {
+	async upload(file: File): Promise<string> {
 		return new Promise((resolve, reject) => {
 			const formData = new FormData();
 			const uploadBody = JSON.parse(this.settings.lskySetting.apiReqBody);
 
 			for (const key in uploadBody) {
 				if (uploadBody[key] == "$FILE") {
-					formData.append(key, file, file.name)
+					formData.append(key, file, file.name);
 				}
 				else {
-					formData.append(key, uploadBody[key])
+					formData.append(key, uploadBody[key]);
 				}
 			}
 
