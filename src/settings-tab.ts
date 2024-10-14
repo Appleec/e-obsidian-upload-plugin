@@ -155,7 +155,7 @@ class UploadSettingsTab extends PluginSettingTab {
 			})
 		new Setting(parentEL)
 			.setName("图片 URL 路径")
-			.setDesc("返回json数据中的图片URL字段的路径，如：data/pathname")
+			.setDesc("返回json数据中的图片URL字段的路径，如：data.pathname")
 			.addText(text => {
 				text
 					.setPlaceholder("")
@@ -252,7 +252,7 @@ class UploadSettingsTab extends PluginSettingTab {
 			})
 		new Setting(parentEL)
 			.setName("图片 URL 路径")
-			.setDesc("返回json数据中的图片URL字段的路径，如：data/pathname")
+			.setDesc("返回json数据中的图片URL字段的路径，如：['data', 'pathname'] => data.pathname")
 			.addText(text => {
 				text
 					.setPlaceholder("")
