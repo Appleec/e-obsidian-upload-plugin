@@ -1,101 +1,68 @@
 # Obsidian Upload Plugin
 
-This is a Upload plugin for Obsidian (https://obsidian.md).
+## 介绍
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+这是 [Obsidian](https://obsidian.md) 插件，专用于上传文件到存储仓库。目前支持 Lskypro（兰空图床），后续有需求会引入其它存储方式，如：Github/Gitee等等。
 
-**Note:** The Obsidian API is still in early alpha and is subject to change at any time!
+## 功能
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+- 支持多平台配置（Lskypro、Halo等）
+- 支持右键菜单上传
 
-## First time developing plugins?
+## 使用
 
-Quick starting guide for new plugin devs:
+### 通过 Obsidian 社区插件中搜索并安装
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+尝试在 Obsidian 社区插件中搜索 `Upload Plugin`，若找到该插件，按照提示直接安装即可。
 
-## Releasing new releases
+### 通过源码仓库或发布的文件下载安装
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+- 从 Release 或源码中下载文件，包含：`main.js`，`manifest.json`，`styles.css`
+- 复制或移动 `main.js`, `styles.css`, `manifest.json` 到 `[VaultFolder]/.obsidian/plugins/[your-plugin-id]/`
+- 找到该插件进行相应配置即可（重启 Obsidian ）
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+> **注意:** `[VaultFolder]` 是根目录、`[your-plugin-id]` 是插件 id（`manifest.json => id`）
 
-## Adding your plugin to the community plugin list
+### 通过第三方下载并安装
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+可尝试使用第三方插件进行安装，如：[BRAT](https://github.com/TfTHacker/obsidian42-brat)
 
-## How to use
+## 开发
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+该项目使用 TypeScript 提供类型检查和文档。 该存储库依赖于 TypeScript 定义格式的最新插件 API (obsidian.d.ts)，其中包含描述其功能的 TSDoc 注释。
 
-## Manually installing the plugin
+### 启动项目
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+```sh
+git clone https://github.com/Appleec/e-obsidian-upload-plugin.git obsidian-upload-plugin
 
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint .\src\`
+cd obsidian-upload-plugin
 
-## Funding URL
+npm i
 
-You can include funding URLs where people who use your plugin can financially support it.
-
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
+npm run dev
 ```
 
-If you have multiple URLs, you can also do:
+### 发布项目
 
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
+- 更新 `manifest.json` 版本，如：`1.0.1`
+- 更新 `versions.json` 中的 `version` 和 `minAppVersion` 版本
+- 打一个版本标签并在代码仓库中创建一个发布任务，如：GitHub Release
+- 将打包好的 `manifest.json`, `main.js`, `styles.css` 上传
+- 查看是否发布成功
 
-## API Documentation
 
-See https://github.com/obsidianmd/obsidian-api
+### API 文档
 
-## References
+查看 https://github.com/obsidianmd/obsidian-api
+
+## 下一步
+
+- [ ] 添加选中图片上传命令行
+- [ ] 添加所有图片上传命令行
+- [ ] 支持 GitHub 配置上传
+
+## 致谢
 
 - [obsidian-image-upload-toolkit](https://github.com/addozhang/obsidian-image-upload-toolkit)
 - [obsidian-image-uploader](https://github.com/Creling/obsidian-image-uploader)
