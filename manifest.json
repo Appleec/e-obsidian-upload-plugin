@@ -1,5 +1,5 @@
 {
-	"id": "upload-plugin",
+	"id": "obsidian-upload-plugin",
 	"name": "Upload Plugin",
 	"version": "0.1.0",
 	"minAppVersion": "0.15.0",
