@@ -4,7 +4,7 @@
 	"version": "0.1.0",
 	"minAppVersion": "0.15.0",
 	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "appleex",
+	"author": "Appleex",
 	"authorUrl": "https://github.com/Appleec/e-obsidian-upload-plugin",
 	"fundingUrl": "https://github.com/Appleec/e-obsidian-upload-plugin",
 	"isDesktopOnly": false
