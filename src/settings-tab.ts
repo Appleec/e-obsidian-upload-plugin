@@ -1,6 +1,6 @@
 // Default
 import {
-	App,
+	App, Notice,
 	PluginSettingTab,
 	Setting,
 } from 'obsidian';
@@ -8,17 +8,17 @@ import {
 // Class
 import UploadPlugin from './main';
 
+// Uploader Fragment
+import type { Fragment } from './uploader/fragment';
+import { LskyFragment } from './uploader/lsky/lskyFragment';
+import { HaloFragment } from './uploader/halo/haloFragment';
+
 // Utils
-import { modes } from './config';
+import { EUploaderProvider } from './config';
 
 // Settings Tab
 class UploadSettingsTab extends PluginSettingTab {
-	plugin: UploadPlugin;
-
-	// 定义三种 DIV 容器
-	defaultDiv: HTMLDivElement; // 默认容器，存放公共配置
-	modeDiv: HTMLDivElement; // 模式容器，存放不同模式下的配置
-	otherDiv: HTMLDivElement; // 其它容器，存放额外配置
+	private readonly plugin: UploadPlugin;
 
 	constructor(app: App, plugin: UploadPlugin) {
 		super(app, plugin);
@@ -30,265 +30,49 @@ class UploadSettingsTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		// 设置大标题
+		// Set title
 		containerEl.createEl("h1", { text: "上传设置" });
 
-		// 默认配置
-		this.defaultDiv = containerEl.createDiv();
-		this.drawDefaultSettings(this.defaultDiv);
-
-		// 模式配置
-		this.modeDiv = containerEl.createDiv();
-		this.drawModeSettings(this.modeDiv, this.plugin.settings.mode);
-
-		// 其它配置
-		this.otherDiv = containerEl.createDiv();
-		this.drawOtherSettings(this.otherDiv);
-	}
-
-	// 自定义方法
-	// 默认配置
-	private drawDefaultSettings(parentEl: HTMLDivElement) {
-		new Setting(parentEl)
+		// Choice the mode
+		const pick = new Setting(containerEl)
 			.setName('模式')
 			.setDesc('选择一种模式')
-			.addDropdown(e => {
-				modes.forEach((m) => {
-					e.addOption(m.value, m.text);
-				})
 
-				e.setValue(this.plugin.settings.mode)
-				e.onChange(async value => {
-					this.plugin.settings.mode = value;
-					// NOTE: 重新设置uploader
-					this.plugin.setupUploader();
-					await this.plugin.saveSettings();
-					await this.drawModeSettings(this.modeDiv, value);
-				})
-			})
-	}
+		// Fragments
+		const fragmentList: Fragment[] = [];
+		fragmentList.push(new LskyFragment(containerEl, this.plugin)); // Lsky
+		fragmentList.push(new HaloFragment(containerEl, this.plugin)); // Halo
 
-	// 模式配置
-	// 切换模式，不同的模式对应不同的配置
-	private async drawModeSettings(parentEl: HTMLDivElement, args: any) {
-		parentEl && parentEl.empty();
+		// Which one will show at the first time
+		fragmentList.forEach(element => {
+			element.update(this.plugin.settings.mode)
+		})
 
-		switch (args) {
-			case 'lsky':
-				this.drawLskySettings(parentEl);
-				break;
-			case 'halo':
-				this.drawHaloSettings(parentEl);
-				break;
-			case 'github':
-				this.drawGithubSettings(parentEl);
-				break;
-			default:
-				break;
+		// Uploader provider
+		const supportList: string[] = [];
+		for (const key in EUploaderProvider) {
+			supportList.push(EUploaderProvider[key as keyof typeof EUploaderProvider]);
 		}
-	}
 
-	// 其它配置
-	private drawOtherSettings(parentEl: HTMLDivElement) {
-
-	}
-
-	// Lskypro 设置
-	private drawLskySettings(parentEL: HTMLDivElement) {
-		// Api URL
-		new Setting(parentEL)
-			.setName("API 地址")
-			.setDesc("请求地址")
-			.addText(text => {
-				text
-					.setPlaceholder("")
-					.setValue(this.plugin.settings.lskySetting.apiURL)
-					.onChange(async (value) => {
-						try {
-							this.plugin.settings.lskySetting.apiURL = value;
-							await this.plugin.saveSettings();
-						}
-						catch (e) {
-							console.log(e)
-						}
-					})
+		// Choose different modes and update different configurations
+		pick.addDropdown(dd => {
+			supportList.forEach((m) => {
+				dd.addOption(m, m);
 			})
 
-		// Api request header
-		new Setting(parentEL)
-			.setName("POST Header")
-			.setDesc("请求头，json 格式")
-			.addTextArea((text) => {
-				text.setPlaceholder("输入合法的请求头")
-					.setValue(this.plugin.settings.lskySetting.apiReqHeader)
-					.onChange(async (value) => {
-						try {
-							this.plugin.settings.lskySetting.apiReqHeader = value;
-							await this.plugin.saveSettings();
-						}
-						catch (e) {
-							console.log(e)
-						}
-					})
-				text.inputEl.rows = 5
-				text.inputEl.cols = 40
-			})
+			dd.setValue(this.plugin.settings.mode)
+				.onChange(async value => {
+					this.plugin.settings.mode = value as EUploaderProvider;
+					await this.plugin.saveSettings();
+					// NOTE: 重新设置 Uploader
+					this.plugin.setupUploader();
 
-		// Api request body
-		new Setting(parentEL)
-			.setName("POST Body")
-			.setDesc("请求体，json 格式")
-			.addTextArea((text) => {
-				text.setPlaceholder("输入合法的请求体")
-					.setValue(this.plugin.settings.lskySetting.apiReqBody)
-					.onChange(async (value) => {
-						try {
-							this.plugin.settings.lskySetting.apiReqBody = value;
-							await this.plugin.saveSettings();
-						}
-						catch (e) {
-							console.log(e)
-						}
+					fragmentList.forEach(element => {
+						element.update(this.plugin.settings.mode) // update the tab when make a choice
 					})
-				text.inputEl.rows = 5
-				text.inputEl.cols = 40
-			})
-		new Setting(parentEL)
-			.setName("图片 URL 路径")
-			.setDesc("返回json数据中的图片URL字段的路径，如：data.pathname")
-			.addText(text => {
-				text
-					.setPlaceholder("")
-					.setValue(this.plugin.settings.lskySetting.imgUrlPath)
-					.onChange(async (value) => {
-						try {
-							this.plugin.settings.lskySetting.imgUrlPath = value;
-							await this.plugin.saveSettings();
-						}
-						catch (e) {
-							console.log(e)
-						}
-					})
-			})
-
-		new Setting(parentEL)
-			.setName("图片 URL 前缀")
-			.setDesc("可选，当填入时，URL = 前缀 + 图片的路径值")
-			.addText(text => {
-				text
-					.setPlaceholder("")
-					.setValue(this.plugin.settings.lskySetting.imgUrlPrefix)
-					.onChange(async (value) => {
-						try {
-							this.plugin.settings.lskySetting.imgUrlPrefix = value;
-							await this.plugin.saveSettings();
-						}
-						catch (e) {
-							console.log(e)
-						}
-					})
+				})
 			})
 	}
-
-	// Halo 设置
-	private drawHaloSettings(parentEL: HTMLDivElement) {
-		// Api URL
-		new Setting(parentEL)
-			.setName("API 地址")
-			.setDesc("请求地址")
-			.addText(text => {
-				text
-					.setPlaceholder("")
-					.setValue(this.plugin.settings.haloSetting.apiURL)
-					.onChange(async (value) => {
-						try {
-							this.plugin.settings.haloSetting.apiURL = value;
-							await this.plugin.saveSettings();
-						}
-						catch (e) {
-							console.log(e)
-						}
-					})
-			})
-
-		// Api request header
-		new Setting(parentEL)
-			.setName("POST Header")
-			.setDesc("请求头，json 格式")
-			.addTextArea((text) => {
-				text.setPlaceholder("输入合法的请求头")
-					.setValue(this.plugin.settings.haloSetting.apiReqHeader)
-					.onChange(async (value) => {
-						try {
-							this.plugin.settings.haloSetting.apiReqHeader = value;
-							await this.plugin.saveSettings();
-						}
-						catch (e) {
-							console.log(e)
-						}
-					})
-				text.inputEl.rows = 5
-				text.inputEl.cols = 40
-			})
-
-		// Api request body
-		new Setting(parentEL)
-			.setName("POST Body")
-			.setDesc("请求体，json 格式")
-			.addTextArea((text) => {
-				text.setPlaceholder("输入合法的请求体")
-					.setValue(this.plugin.settings.haloSetting.apiReqBody)
-					.onChange(async (value) => {
-						try {
-							this.plugin.settings.haloSetting.apiReqBody = value;
-							await this.plugin.saveSettings();
-						}
-						catch (e) {
-							console.log(e)
-						}
-					})
-				text.inputEl.rows = 5
-				text.inputEl.cols = 40
-			})
-		new Setting(parentEL)
-			.setName("图片 URL 路径")
-			.setDesc("返回json数据中的图片URL字段的路径，如：['data', 'pathname'] => data.pathname")
-			.addText(text => {
-				text
-					.setPlaceholder("")
-					.setValue(this.plugin.settings.haloSetting.imgUrlPath)
-					.onChange(async (value) => {
-						try {
-							this.plugin.settings.haloSetting.imgUrlPath = value;
-							await this.plugin.saveSettings();
-						}
-						catch (e) {
-							console.log(e)
-						}
-					})
-			})
-
-		new Setting(parentEL)
-			.setName("图片 URL 前缀")
-			.setDesc("可选，当填入时，URL = 前缀 + 图片的路径值")
-			.addText(text => {
-				text
-					.setPlaceholder("")
-					.setValue(this.plugin.settings.haloSetting.imgUrlPrefix)
-					.onChange(async (value) => {
-						try {
-							this.plugin.settings.haloSetting.imgUrlPrefix = value;
-							await this.plugin.saveSettings();
-						}
-						catch (e) {
-							console.log(e)
-						}
-					})
-			})
-	}
-
-	// Github 设置
-	private drawGithubSettings(parentEL: HTMLDivElement) {}
 }
 
 export default UploadSettingsTab;

@@ -16,70 +16,39 @@ import { join, basename } from 'path';
 // Utils
 import Helper from "./utils/helper";
 import { isAssetTypeAnImage, bufferToArrayBuffer } from "./utils/utils";
-import uploader from "./uploader";
 
 // Class
 import UploadSettingTab from './settings-tab';
 import UploadModal from './modal';
+import uploaderBuilder from './uploader/builder';
 
 // Types
-import { IUploadPluginSettings, IImage, IUploader } from './type';
+import { IImage, IUploader, ISettings } from './type';
+
+// Utils
+import { DEFAULT_SETTINGS } from './config';
 
 // Remember to rename these classes and interfaces!
 
-// 默认选项
-const DEFAULT_SETTINGS: IUploadPluginSettings = {
-	mode: 'lsky',
-	apiURL: '',
-	apiReqHeader: '',
-	apiReqBody: "{\"file\": \"$FILE\"}",
-
-	imgUrlPath: '',
-	imgUrlPrefix: '',
-
-	lskySetting: {
-		apiURL: "",
-		apiReqHeader: "",
-		apiReqBody: "{\"file\": \"$FILE\"}",
-		imgUrlPath: "",
-		imgUrlPrefix: "",
-	},
-	haloSetting: {
-		apiURL: "",
-		apiReqHeader: "",
-		apiReqBody: "{\"file\": \"$FILE\"}",
-		imgUrlPath: "",
-		imgUrlPrefix: "",
-	},
-}
-
 class UploadPlugin extends Plugin {
-	settings: IUploadPluginSettings;
+	settings: ISettings;
 
-	// 自定义
+	// Helper
 	helper: Helper;
-	editor: Editor;
-
 	// Uploader
 	uploader: IUploader;
 
 	async onload() {
-		// 加载设置
 		await this.loadSettings();
 
-		// 赋值
+		// Helper
 		this.helper = new Helper(this.app);
 
-		// 初始化设置 uploader
+		// Setup Uploader
 		this.setupUploader();
 
-		// 图标
-		addIcon(
-			"upload",
-			`
-			<svg t="1728792346606" class="icon" viewBox="60 60 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1472" width="120" height="120" fill="#707070"><path d="M384 298.666667h256v85.333333h-170.666667v85.333333h170.666667v85.333334h-170.666667v85.333333h170.666667v85.333333H384V298.666667zM128 213.333333a85.333333 85.333333 0 0 1 85.333333-85.333333h597.333334a85.333333 85.333333 0 0 1 85.333333 85.333333v597.333334a85.333333 85.333333 0 0 1-85.333333 85.333333H213.333333a85.333333 85.333333 0 0 1-85.333333-85.333333V213.333333z m85.333333 0v597.333334h597.333334V213.333333H213.333333z" p-id="1473" data-spm-anchor-id="a313x.search_index.0.i0.54d23a81JCWFR2" class="selected"></path></svg>
-			`
-		);
+		// Add Custom Icon
+		addIcon("upload", `<svg t="1728792346606" class="icon" viewBox="60 60 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1472" width="120" height="120" fill="#707070"><path d="M384 298.666667h256v85.333333h-170.666667v85.333333h170.666667v85.333334h-170.666667v85.333333h170.666667v85.333333H384V298.666667zM128 213.333333a85.333333 85.333333 0 0 1 85.333333-85.333333h597.333334a85.333333 85.333333 0 0 1 85.333333 85.333333v597.333334a85.333333 85.333333 0 0 1-85.333333 85.333333H213.333333a85.333333 85.333333 0 0 1-85.333333-85.333333V213.333333z m85.333333 0v597.333334h597.333334V213.333333H213.333333z" p-id="1473" data-spm-anchor-id="a313x.search_index.0.i0.54d23a81JCWFR2" class="selected"></path></svg>`);
 
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon('upload', 'Upload Plugin', (evt: MouseEvent) => {
@@ -146,7 +115,7 @@ class UploadPlugin extends Plugin {
 		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
 	}
 
-	onunload() {}
+	async onunload() {}
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
@@ -355,9 +324,9 @@ class UploadPlugin extends Plugin {
 	// 设置 uploader
 	setupUploader() {
 		try {
-			this.uploader = uploader(this.settings);
+			this.uploader = uploaderBuilder(this.settings);
 		} catch (e) {
-			console.log(`设置 Uploader 失败: ${e}`);
+			console.log(`启动 Uploader 失败: ${e}`);
 		}
 	}
 }

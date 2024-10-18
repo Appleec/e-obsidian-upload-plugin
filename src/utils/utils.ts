@@ -16,22 +16,58 @@ const IMAGE_EXT_LIST = [
 ];
 
 /**
- * File 转 ArrayBuffer
+ * File to ArrayBuffer
  * @param file
  */
 export async function fileToArrayBuffer(file: File) {
 	return new Promise<any>((resolve, reject) => {
 		const fr = new FileReader();
-		const filename = file.name;
+		let buf: any;
 
 		fr.readAsArrayBuffer(file);
-		fr.addEventListener("loadend",(e: any) => {
-			const buf = e.target.result;
-			resolve([buf, filename]);
-		},false);
-		fr.addEventListener("error", (e: any) => {
-			reject(e);
-		})
+
+		fr.onload = () => {
+			buf = fr.result;
+		}
+
+		fr.onerror = (error) => {
+			reject(error);
+		}
+
+		fr.onloadend = () => {
+			// resolve([buf, file && file.name]);
+			resolve(buf);
+		}
+
+		// fr.addEventListener("loadend",(e: any) => {
+		// 	const buf = e.target.result;
+		// 	resolve(buf);
+		// },false);
+		// fr.addEventListener("error", (e: any) => {
+		// 	reject(e);
+		// })
+	})
+}
+
+/**
+ * File to Base64
+ * @param file
+ */
+export async function fileToBase64(file: File): Promise<string> {
+	return await new Promise((resolve, reject) => {
+		const reader = new FileReader()
+		let fileResult: string
+		reader.readAsDataURL(file)
+		reader.onload = () => {
+			fileResult = reader.result as string
+			fileResult = fileResult.slice(fileResult.indexOf(',') + 1)
+		}
+		reader.onerror = (error) => {
+			reject(error)
+		}
+		reader.onloadend = () => {
+			resolve(fileResult)
+		}
 	})
 }
 
@@ -113,81 +149,4 @@ export function isMedia(obj: any): obj is IMedia {
 		&& 'fileName' in obj && typeof obj.fileName === 'string'
 		&& 'content' in obj && obj.content instanceof ArrayBuffer
 	);
-}
-
-export interface Media {
-	mimeType: string;
-	fileName: string;
-	content: ArrayBuffer;
-}
-
-/**
- * Convert original item name to custom one.
- *
- * @param name original item name. If `isArray` is `true`, which means is in an array, the `name` will be appended by `[]`
- * @param isArray whether this item is in an array
- */
-export type FormItemNameMapper = (name: string, isArray: boolean) => string;
-
-export class FormItems {
-	#formData: Record<string, SafeAny> = {};
-
-	append(name: string, data: string): FormItems;
-	append(name: string, data: IMedia): FormItems;
-	append(name: string, data: string | IMedia): FormItems {
-		const existing = this.#formData[name];
-		if (existing) {
-			this.#formData[name] = [ existing ];
-			this.#formData[name].push(data);
-		} else {
-			this.#formData[name] = data;
-		}
-		return this;
-	}
-
-	toArrayBuffer(option: {
-		boundary: string;
-		nameMapper?: FormItemNameMapper;
-	}): Promise<ArrayBuffer> {
-		const CRLF = '\r\n';
-		const itemPart = (name: string, data: string | IMedia, isArray: boolean) => {
-			let itemName = name;
-			if (option.nameMapper) {
-				itemName = option.nameMapper(name, isArray);
-			}
-
-			body.push(encodedItemStart);
-			if (isString(data)) {
-				body.push(encoder.encode(`Content-Disposition: form-data; name="${itemName}"${CRLF}${CRLF}`));
-				body.push(encoder.encode(data));
-			} else {
-				const media = data;
-				body.push(encoder.encode(`Content-Disposition: form-data; name="${itemName}"; filename="${media.fileName}"${CRLF}Content-Type: ${media.mimeType}${CRLF}${CRLF}`));
-				body.push(media.content);
-			}
-			body.push(encoder.encode(CRLF));
-		};
-
-		const encoder = new TextEncoder();
-		const encodedItemStart = encoder.encode(`--${option.boundary}${CRLF}`);
-		const body: ArrayBuffer[] = [];
-		Object.entries(this.#formData).forEach(([ name, data ]) => {
-			if (isArray(data)) {
-				data.forEach(item => {
-					itemPart(`${name}[]`, item, true);
-				});
-			} else {
-				itemPart(name, data, false);
-			}
-		});
-		body.push(encoder.encode(`--${option.boundary}--`));
-		return new Blob(body).arrayBuffer();
-	}
-}
-
-export function formItemNameMapper(name: string, isArray: boolean): string {
-	if (name === 'file' && !isArray) {
-		return 'media[]';
-	}
-	return name;
 }

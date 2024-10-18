@@ -1,16 +1,27 @@
-// Defaults
-import { IUploadPluginSettings, IUploader } from "./type";
+// Imports
 import axios from "axios";
 import objectPath from "object-path";
-import {Notice} from "obsidian";
 
-class LskyUpload implements IUploader {
-	private readonly settings: IUploadPluginSettings;
+// Class
+import { Uploader } from "../uploader";
 
-	constructor(settings: IUploadPluginSettings) {
+// Types
+import { ISettings } from "../../type";
+
+class LskyUploader extends Uploader {
+	private readonly settings: ISettings;
+
+	constructor(settings: ISettings) {
+		super()
+
 		this.settings = settings;
 	}
 
+	/**
+	 * Upload
+	 *
+	 * @param file
+	 */
 	async upload(file: File): Promise<string> {
 		return new Promise((resolve, reject) => {
 			const formData = new FormData();
@@ -36,11 +47,7 @@ class LskyUpload implements IUploader {
 			})
 		})
 	}
-
-	//
-	drawSettingsTab(parentEL: HTMLDivElement) {
-
-	}
 }
 
-export default LskyUpload;
+export { LskyUploader };
+export default LskyUploader;
