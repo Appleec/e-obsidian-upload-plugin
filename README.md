@@ -69,3 +69,4 @@ npm run dev
 - [obsidian-image-auto-upload-plugin](https://github.com/renmu123/obsidian-image-auto-upload-plugin)
 - [obsidian-image-uploader](https://github.com/sancijun/obsidian-image-uploader)
 - [obsidian-wordpress](https://github.com/devbean/obsidian-wordpress)
+- [obsidian-emo-uploader](https://github.com/yaleiyale/obsidian-emo-uploader)
