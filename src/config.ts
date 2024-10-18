@@ -1,4 +1,14 @@
-const config = {
+// Types
+import { ISettings } from "./type";
+
+export enum EUploaderProvider {
+	Lsky = 'Lsky',
+	Halo = 'Halo',
+	Github = 'Github',
+}
+
+export const DEFAULT_SETTINGS: ISettings = {
+	mode: EUploaderProvider.Lsky,
 	modes: [
 		{
 			text: 'Lskypro',
@@ -14,21 +24,20 @@ const config = {
 		},
 	],
 	lskySetting: {
-		"apiURL": "",
-		"apiReqHeader": {},
-		"apiReqBody": {},
-		"imgUrlPath": "",
-		"imgUrlPrefix": ""
+		apiURL: "",
+		apiReqHeader: "",
+		apiReqBody: "{\"file\": \"$FILE\"}",
+		imgUrlPath: "",
+		imgUrlPrefix: "",
 	},
 	haloSetting: {
 		// See: https://api.halo.run/#/
-		"apiURL": "",
-		"apiReqHeader": {},
-		"apiReqBody": {},
-		"imgUrlPath": "",
-		"imgUrlPrefix": ""
+		apiURL: "",
+		apiReqHeader: "",
+		apiReqBody: "{\"file\": \"$FILE\"}",
+		imgUrlPath: "",
+		imgUrlPrefix: "",
 	}
 }
-
-export const { modes } = config;
-export default config;
+export const { mode, modes } = DEFAULT_SETTINGS;
+export default DEFAULT_SETTINGS;
