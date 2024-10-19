@@ -12,6 +12,7 @@ import UploadPlugin from './main';
 import type { Fragment } from './uploader/fragment';
 import { LskyFragment } from './uploader/lsky/lskyFragment';
 import { HaloFragment } from './uploader/halo/haloFragment';
+import { GithubFragment } from './uploader/github/githubFragment';
 
 // Utils
 import { EUploaderProvider } from './config';
@@ -42,6 +43,7 @@ class UploadSettingsTab extends PluginSettingTab {
 		const fragmentList: Fragment[] = [];
 		fragmentList.push(new LskyFragment(containerEl, this.plugin)); // Lsky
 		fragmentList.push(new HaloFragment(containerEl, this.plugin)); // Halo
+		fragmentList.push(new GithubFragment(containerEl, this.plugin)); // Github
 
 		// Which one will show at the first time
 		fragmentList.forEach(element => {

@@ -13,6 +13,7 @@ export interface ISettings {
 	modes?: any[];
 	lskySetting: ISettingsItem;
 	haloSetting: ISettingsItem;
+	githubSetting: ISettingsItem;
 }
 export interface ISettingsItem {
 	apiURL: string;

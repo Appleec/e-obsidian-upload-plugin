@@ -150,3 +150,10 @@ export function isMedia(obj: any): obj is IMedia {
 		&& 'content' in obj && obj.content instanceof ArrayBuffer
 	);
 }
+
+export function getRandomFileName (name: string): string {
+	const startSuffix = name.lastIndexOf('.');
+	let time = Date.parse(new Date().toString()).toString() + (Math.random() * 10086).toString(36).slice(-6);
+	time += startSuffix > 0 ? name.substring(startSuffix) : '';
+	return time
+}

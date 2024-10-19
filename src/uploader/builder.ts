@@ -1,6 +1,7 @@
 // Uploader
 import LskyUpload from "./lsky/lskyUploader";
 import HaloUploader from "./halo/haloUploader";
+import GithubUploader from "./github/githubUploader";
 
 // Config
 import { EUploaderProvider } from "../config";
@@ -14,6 +15,8 @@ function uploaderBuilder(settings: ISettings): IUploader {
 			return new LskyUpload(settings);
 		case EUploaderProvider.Halo:
 			return new HaloUploader(settings);
+		case EUploaderProvider.Github:
+			return new GithubUploader(settings);
 		default:
 			throw new Error('should not reach here!')
 	}

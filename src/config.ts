@@ -37,6 +37,13 @@ export const DEFAULT_SETTINGS: ISettings = {
 		apiReqBody: "{\"file\": \"$FILE\"}",
 		imgUrlPath: "",
 		imgUrlPrefix: "",
+	},
+	githubSetting: {
+		apiURL: "https://api.github.com",
+		apiReqHeader: "{\n  \"Authorization\":\"token [xxx]\"\n}",
+		apiReqBody: "{\n\"owner\": \"\",\n\"repo\": \"\",\n\"branch\": \"\",\n\"path\": \"$PATH\",\n\"message\": \"\",\n\"content\": \"$CONTENT\"\n}",
+		imgUrlPath: "",
+		imgUrlPrefix: "",
 	}
 }
 export const { mode, modes } = DEFAULT_SETTINGS;
