@@ -15,8 +15,8 @@ class GithubFragment extends Fragment{
 
 		// Api URL
 		new Setting(el)
-			.setName("*API 地址")
-			.setDesc("必填，请求地址，如：https://api.github.com")
+			.setName("API 请求地址")
+			.setDesc("上传文件 API 地址，注意末尾不添加 `/`，如：https://api.github.com")
 			.addText(text => {
 				text
 					.setPlaceholder("")
@@ -34,8 +34,8 @@ class GithubFragment extends Fragment{
 
 		// Api request header
 		new Setting(el)
-			.setName("*POST Header")
-			.setDesc("必填，请求头，json 格式，替换 [xxx] => Personal access tokens")
+			.setName("API 请求头")
+			.setDesc("POST Header，JSON 格式，替换 token [xxx] => Personal access tokens")
 			.addTextArea((text) => {
 				text.setPlaceholder("{\n" +
 					"  \"Authorization\":\"token [xxx]\"\n" +
@@ -56,8 +56,8 @@ class GithubFragment extends Fragment{
 
 		// Api request body
 		new Setting(el)
-			.setName("*POST Body")
-			.setDesc("请求体，json 格式，尽量保留 $ 字段")
+			.setName("API 请求体")
+			.setDesc("POST Body，JSON 格式，尽量保留 $ 字段")
 			.setTooltip("*owner: 用户, \n*repo: 仓库名, \n*path: 路径, \nbranch：分支, \n*message: 消息, \n*content: base64图片")
 			.addTextArea((text) => {
 				text.setPlaceholder("{\n" +
@@ -84,7 +84,7 @@ class GithubFragment extends Fragment{
 
 		new Setting(el)
 			.setName("图片 URL 路径")
-			.setDesc("返回json数据中的图片URL字段的路径，如：content.download_url（完整链接），content.path（局部路径）")
+			.setDesc("返回数据（Response）中图片 URL 字段路径，以 JSON 对象为例，如：data.pathname。本例：content.download_url（完整链接），content.path（局部路径）")
 			.addText(text => {
 				text
 					.setPlaceholder("")

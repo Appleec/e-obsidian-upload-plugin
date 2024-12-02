@@ -129,6 +129,62 @@ https://xxx.xxx,xxx/apis/api.console.halo.run/v1alpha1/attachments/upload
 https://xxx.xxx.xxx/
 ```
 
+### Github 配置
+
+> https://docs.github.com/zh/rest/repos/contents?apiVersion=2022-11-28
+
+- API 请求地址 - 上传文件 API 地址，注意末尾不添加 `/`
+
+```shell
+# 注意，URL 地址不添加 `/`
+https://api.github.com
+```
+
+- API 请求头 - POST Header，JSON 格式
+
+```json
+{
+	"Accept": "application/vnd.github+json",
+	"Authorization": "token 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"
+}
+```
+
+> `Authorization` 必须，认证令牌，注意格式或空格，具体字段按需变更
+
+- API 请求体 - POST Body，JSON 格式
+
+```json
+{
+	"owner": "Appleec",
+	"repo": "e-test",
+	"branch": "master",
+	"path": "img/$PATH",
+	"message": "From uploader Github",
+	"content": "$CONTENT"
+}
+```
+
+> `content` - 必须，表示 base64 编码图片，`$CONTENT` 为内置字段，不可变更  
+> `owner` - 必须，表示用户，自行查阅 API
+> `repo` - 必须，表示仓库名，自行查阅 API
+> `path` - 必须，表示文件路径，自行查阅 API
+> `branch` - 可选，表示分支，自行查阅 API
+> `message` - 必须，表示消息内容，自行查阅 API
+
+- 图片 URL 路径 - 返回数据（Response）中图片 URL 字段路径，以 JSON 对象为例，如：data.pathname
+
+```
+["content", "download_url"]
+```
+
+- 图片 URL 前缀 - 可选，当填入时，此值将插入到图片 URL 路径之前，即：URL = 前缀 + 图片 URL 路径
+
+```shell
+# 一般 API 只返回图片路径或者存在多个域名情况使用
+# 注意，URL 地址添加 `/`
+https://xxx.xxx.xxx/
+```
+
 ## 开发
 
 该项目使用 TypeScript 提供类型检查和文档。 该存储库依赖于 TypeScript 定义格式的最新插件 API (obsidian.d.ts)，其中包含描述其功能的 TSDoc 注释。
