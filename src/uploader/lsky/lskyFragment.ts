@@ -15,11 +15,11 @@ export class LskyFragment extends Fragment{
 
 		// Api URL
 		new Setting(el)
-			.setName("API 地址")
-			.setDesc("请求地址")
+			.setName("API 请求地址")
+			.setDesc("上传文件 API 地址，如：https://xxx.xxx.xxx/api/v1/upload，注意末尾不添加 `/`")
 			.addText(text => {
 				text
-					.setPlaceholder("")
+					.setPlaceholder("https://xxx.xxx.xxx/api/v1/upload")
 					.setValue(plugin.settings.lskySetting.apiURL)
 					.onChange(async (value) => {
 						try {
@@ -34,8 +34,8 @@ export class LskyFragment extends Fragment{
 
 		// Api request header
 		new Setting(el)
-			.setName("POST Header")
-			.setDesc("请求头，json 格式")
+			.setName("API 请求头")
+			.setDesc("POST Header，JSON 格式")
 			.addTextArea((text) => {
 				text.setPlaceholder("输入合法的请求头")
 					.setValue(plugin.settings.lskySetting.apiReqHeader)
@@ -54,8 +54,8 @@ export class LskyFragment extends Fragment{
 
 		// Api request body
 		new Setting(el)
-			.setName("POST Body")
-			.setDesc("请求体，json 格式")
+			.setName("API 请求体")
+			.setDesc("POST Body，JSON 格式")
 			.addTextArea((text) => {
 				text.setPlaceholder("输入合法的请求体")
 					.setValue(plugin.settings.lskySetting.apiReqBody)
@@ -75,7 +75,7 @@ export class LskyFragment extends Fragment{
 		// Image URL path
 		new Setting(el)
 			.setName("图片 URL 路径")
-			.setDesc("返回json数据中的图片URL字段的路径，如：data/pathname")
+			.setDesc("返回数据（Response）中图片 URL 字段路径，以 JSON 对象为例，如：data.pathname")
 			.addText(text => {
 				text
 					.setPlaceholder("")
@@ -94,7 +94,7 @@ export class LskyFragment extends Fragment{
 		// Image URL prefix
 		new Setting(el)
 			.setName("图片 URL 前缀")
-			.setDesc("可选，当填入时，URL = 前缀 + 图片的路径值")
+			.setDesc("可选，当填入时，此值将插入到图片 URL 路径之前，即：URL = 前缀 + 图片 URL 路径")
 			.addText(text => {
 				text
 					.setPlaceholder("")

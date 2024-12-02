@@ -1,5 +1,5 @@
 {
-  "name": "obsidian-upload-plugin",
+  "name": "e-obsidian-upload-plugin",
   "version": "1.0.2",
   "description": "This is a upload plugin for Obsidian (https://obsidian.md)",
   "main": "main.js",

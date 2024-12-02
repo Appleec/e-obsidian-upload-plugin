@@ -1,10 +1,10 @@
 {
-	"id": "obsidian-upload-plugin",
-	"name": "Upload Plugin",
+	"id": "e-obsidian-upload-plugin",
+	"name": "EUpload",
 	"version": "1.0.2",
 	"minAppVersion": "0.15.0",
 	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Appleex",
+	"author": "appleex <771992522@qq.com>",
 	"authorUrl": "https://github.com/Appleec/e-obsidian-upload-plugin",
 	"fundingUrl": "https://github.com/Appleec/e-obsidian-upload-plugin",
 	"isDesktopOnly": false
