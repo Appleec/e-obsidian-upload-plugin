@@ -34,7 +34,7 @@
 
 > 下面配置包含具体实例，请按需替换自己的内容。
 
-### 配置 Lskypro
+### Lskypro 配置
 
 - API 请求地址 - 上传文件 API 地址，注意末尾不添加 `/`
 
@@ -80,6 +80,53 @@ data.pathname
 # 一般 API 只返回图片路径或者存在多个域名情况使用
 # 注意，URL 地址添加 `/`
 https://xxx.xxx.xxx/upload/eblog/
+```
+
+### Halo 配置
+
+- API 请求地址 - 上传文件 API 地址，注意末尾不添加 `/`
+
+```shell
+# 注意，URL 地址不添加 `/`
+https://xxx.xxx,xxx/apis/api.console.halo.run/v1alpha1/attachments/upload
+```
+
+- API 请求头 - POST Header，JSON 格式
+
+```json
+{
+	"Authorization": "Bearer pat_eyJraWQiOiI1SG9MUWVvUW10bV9zd2JISFRSODFEd1dUWVNyUUlyc0N3NjE2R1dQTXpnIiwiYWxnIjoiUlMyNTYifQ.eyJpc3MiOiJodHRwczovL2Jsb2cuZWxpbnp5LmNvbS8iLCJzdWIiOiJhZG1pbiIsImlhdCI6MTcxMTk1NjY5MiwianRpIjoiN2E5NDY3NjEtY2QzYi1kODc4LTJkOGMtZWQxNmUwZDk4NzFjIiwicGF0X25hbWUiOiJwYXQtYWRtaW4tbkdnZG0ifQ.cl7n0f9SqP5qwYUW2ZM6DL6Ex6Xh9GvxL_hwEDJuUn8tlyuzOhcjUqkGSCO1D8E0lqym7RtV7xDQzSLkQybKbSwRqeMEDbLbdLMDpzD2Vu1aptz5m0ifsm9pvpm2Wqnn_px68arhqHqmMwP-8N9F1m-fMu1ovBuXI2gzHA56Ne1yWsSObeasxqNP1CNsez_abdv0fPKxbBsV_2JrQeHYc0y90M8V0WZ9d3_zdrgOMg6Hm481VprrHUwB9nxrsVsCxd_ROwf93ZhGo_VPV5YG8_Pz4CwRGzkIABVHO1leUXyMD24nOpG9csGo-mauuik7oi1h6eLUMi2902qKFUctwRsF4lKQSP6h2Li9UUt0FYQp78uaTDbke3eAxLq1nqWfOn3Lplpe1tz8MPXtZGclx2xz4zkQWs5TdOU4cuukMIJoXfc1VCbAR9AuaG1BVMZYnL-scgg9I9GNHjtcfgFMskUaEKQlyYTNiIweaqQHMlBHvdxJjCMko9jdB2qnMNw9cs2QfMreK278A6ucHMOB9WGVh0thpor1gk2MvAcV3k-ai21BKUdOLooxftdXbI7V9xif_fLEZwFvtf2RtRqChJpXLyGS2-xoOwg00kz0khckv43vntSCPZ8pqHnTAWsy_ssf80WOajs2guY25l04PXAshEGndvziB0Aod3AoXdY"
+}
+```
+
+> `Authorization` 必须，认证令牌，注意格式或空格，具体字段按需变更
+
+- API 请求体 - POST Body，JSON 格式
+
+```json
+{
+	"file": "$FILE",
+	"policyName": "attachment-policy-gUpSV",
+	"groupName": "attachment-group-JWlvm"
+}
+```
+
+> `file` - 必须，二进制文件，`$FILE` 为内置字段，不可变更  
+> `policyName` - 可选，此处表示存储仓库，自行查阅 API
+> `groupName` - 可选，此处表示分组名称，自行查阅 API
+
+- 图片 URL 路径 - 返回数据（Response）中图片 URL 字段路径，以 JSON 对象为例，如：data.pathname
+
+```
+["metadata", "annotations", "storage.halo.run/uri"]
+```
+
+- 图片 URL 前缀 - 可选，当填入时，此值将插入到图片 URL 路径之前，即：URL = 前缀 + 图片 URL 路径
+
+```shell
+# 一般 API 只返回图片路径或者存在多个域名情况使用
+# 注意，URL 地址添加 `/`
+https://xxx.xxx.xxx/
 ```
 
 ## 开发
