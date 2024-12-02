@@ -23,5 +23,9 @@ data.json
 # Exclude macOS Finder (System Explorer) View States
 .DS_Store
 
+# Docs
+docs/.vitepress/cache
+docs/.vitepress/dist
+
 # Other
 backup
