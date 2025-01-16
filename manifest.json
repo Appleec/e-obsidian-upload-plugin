@@ -3,9 +3,8 @@
 	"name": "EUpload",
 	"version": "1.0.2",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "appleex <771992522@qq.com>",
+	"description": "Support uploading files to different platforms.",
+	"author": "Appleec",
 	"authorUrl": "https://github.com/Appleec/e-obsidian-upload-plugin",
-	"fundingUrl": "https://github.com/Appleec/e-obsidian-upload-plugin",
 	"isDesktopOnly": false
 }
