@@ -1,10 +1,10 @@
 {
-	"id": "e-obsidian-upload-plugin",
+	"id": "e-upload",
 	"name": "EUpload",
 	"version": "1.0.2",
 	"minAppVersion": "0.15.0",
 	"description": "Support uploading files to different platforms.",
-	"author": "Appleec",
+	"author": "Appleex",
 	"authorUrl": "https://github.com/Appleec/e-obsidian-upload-plugin",
 	"isDesktopOnly": false
 }
