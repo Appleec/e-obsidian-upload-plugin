@@ -1,3 +1,4 @@
+// Imports
 import {
 	Editor,
 	MarkdownView,
@@ -7,11 +8,14 @@ import {
 	MenuItem,
 	TFile,
 	FileSystemAdapter,
-	addIcon,
+	Workspace,
 } from 'obsidian';
 
 import { readFile } from 'fs';
 import { join, basename } from 'path';
+
+// Icons
+import { addCustomRibbonIcon } from './icons';
 
 // Utils
 import Helper from "./utils/helper";
@@ -31,32 +35,29 @@ import { DEFAULT_SETTINGS } from './config';
 // Remember to rename these classes and interfaces!
 
 class UploadPlugin extends Plugin {
-	settings: ISettings;
-
-	// Helper
-	helper: Helper;
-	// Uploader
-	uploader: IUploader;
+	settings: ISettings; // 声明设置
+	appPlugins: any; // 声明插件
+	appWorkspace: Workspace; // 声明工作空间
+	helper: Helper; // 声明辅助工具
+	uploader: IUploader; // 声明上传器Uploader
 
 	async onload() {
+		console.log(`%c ${this.manifest.name} %c v${this.manifest.version} `, `padding: 2px; border-radius: 2px 0 0 2px; color: #fff; background: #5B5B5B;`, `padding: 2px; border-radius: 0 2px 2px 0; color: #fff; background: #409EFF;`);
+
+		// 加载配置
 		await this.loadSettings();
 
-		// Helper
-		this.helper = new Helper(this.app);
+		// 加载工具
+		// @ts-ignore
+		this.appPlugins = this.app.plugins;
+		this.appWorkspace = this.app.workspace;
+		this.helper = new Helper(this.app); // 自定义方法
 
-		// Setup Uploader
+		// 启动上传器
 		this.setupUploader();
 
-		// Add Custom Icon
-		addIcon("upload", `<svg t="1728792346606" class="icon" viewBox="60 60 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1472" width="120" height="120" fill="#707070"><path d="M384 298.666667h256v85.333333h-170.666667v85.333333h170.666667v85.333334h-170.666667v85.333333h170.666667v85.333333H384V298.666667zM128 213.333333a85.333333 85.333333 0 0 1 85.333333-85.333333h597.333334a85.333333 85.333333 0 0 1 85.333333 85.333333v597.333334a85.333333 85.333333 0 0 1-85.333333 85.333333H213.333333a85.333333 85.333333 0 0 1-85.333333-85.333333V213.333333z m85.333333 0v597.333334h597.333334V213.333333H213.333333z" p-id="1473" data-spm-anchor-id="a313x.search_index.0.i0.54d23a81JCWFR2" class="selected"></path></svg>`);
-
-		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon('upload', 'Upload Plugin', (evt: MouseEvent) => {
-			// Called when the user clicks the icon.
-			new Notice('This is a notice!');
-		});
-		// Perform additional things with the ribbon
-		ribbonIconEl.addClass('my-plugin-ribbon-class');
+		// 添加自定义图标
+		addCustomRibbonIcon(this);
 
 		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
 		const statusBarItemEl = this.addStatusBarItem();
@@ -307,7 +308,7 @@ class UploadPlugin extends Plugin {
 
 					menu.addItem((item: MenuItem) => {
 						item
-							.setTitle("上传文件")
+							.setTitle("E Upload")
 							.setIcon("upload")
 							.onClick(() => {
 								if (!(file instanceof TFile)) {
