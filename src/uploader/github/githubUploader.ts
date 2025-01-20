@@ -74,7 +74,7 @@ class GithubUploader extends Uploader {
 					resolve(url)
 				})
 				.catch(err => {
-					console.log(err);
+					// console.log(err);
 
 					// Error: Request failed, status 422 => Validation failed, or the endpoint has been spammed.
 					// 文件名冲突引起上传失败

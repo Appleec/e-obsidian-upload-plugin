@@ -27,7 +27,7 @@ class HaloFragment extends Fragment{
 							await plugin.saveSettings();
 						}
 						catch (e) {
-							console.log(e)
+							console.error(e);
 						}
 					})
 			})
@@ -45,7 +45,7 @@ class HaloFragment extends Fragment{
 							await plugin.saveSettings();
 						}
 						catch (e) {
-							console.log(e)
+							console.error(e);
 						}
 					})
 				text.inputEl.rows = 5
@@ -65,7 +65,7 @@ class HaloFragment extends Fragment{
 							await plugin.saveSettings();
 						}
 						catch (e) {
-							console.log(e)
+							console.error(e);
 						}
 					})
 				text.inputEl.rows = 5
@@ -85,7 +85,7 @@ class HaloFragment extends Fragment{
 							await plugin.saveSettings();
 						}
 						catch (e) {
-							console.log(e)
+							console.error(e);
 						}
 					})
 			})
@@ -103,7 +103,7 @@ class HaloFragment extends Fragment{
 							await plugin.saveSettings();
 						}
 						catch (e) {
-							console.log(e)
+							console.error(e);
 						}
 					})
 			})

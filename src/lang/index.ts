@@ -10,27 +10,30 @@ import en from './locale/en';
 import zhCN from './locale/zh-cn';
 
 // locale list
-import { locales } from './locales';
-const languagePattern = locales.map(lang => lang.alternate || lang.locale).join('|');
-const languageRegexp = new RegExp(`^(${languagePattern})$`);
+// import { locales } from './locales';
+// const languagePattern = locales.map(lang => lang.alternate || lang.locale).join('|');
+// const languageRegexp = new RegExp(`^(${languagePattern})$`);
 
-// const localeMap: { [k: string]: Partial<typeof zh_cn> } = {
-// 	'zh-cn': zh_cn,
-// 	// 'en-us': en_us,
-// };
-// // console.log(moment.locale())
-// const locale = localeMap[moment.locale()];
+const localeMap: { [k: string]: Partial<typeof en> } = {
+	en,
+	'zh-cn': zhCN,
+	// 'en-us': en_us,
+};
 
-const locale = moment.locale();
+const locale = localeMap[moment.locale()];
 
 export const resources = {
 	en: { translation: en },
 	"zh-CN": { translation: zhCN },
 }
 
-export function t(str: keyof typeof zhCN): string {
-	console.log('=>', zhCN[str])
-	return '';
+export function t(str: keyof typeof en): string {
+	if (!locale) {
+		console.error("Error: EUpload locale not found", moment.locale());
+	}
+
+	// @ts-ignore
+	return (locale && locale[str]) || en[str];
 }
 
 export const setupI18n = async (app: any) => {
