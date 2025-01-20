@@ -8,6 +8,7 @@ export enum EUploaderProvider {
 }
 
 export const DEFAULT_SETTINGS: ISettings = {
+	locale: 'zh-CN',
 	mode: EUploaderProvider.Lsky,
 	modes: [
 		{

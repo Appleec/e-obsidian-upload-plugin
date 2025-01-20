@@ -1,3 +1,4 @@
+// Imports
 import {
 	Editor,
 	MarkdownView,
@@ -7,6 +8,7 @@ import {
 	MenuItem,
 	TFile,
 	FileSystemAdapter,
+	Workspace,
 	addIcon,
 } from 'obsidian';
 
@@ -30,89 +32,48 @@ import { DEFAULT_SETTINGS } from './config';
 
 // Remember to rename these classes and interfaces!
 
-class UploadPlugin extends Plugin {
-	settings: ISettings;
-
-	// Helper
-	helper: Helper;
-	// Uploader
-	uploader: IUploader;
+class EUpload extends Plugin {
+	settings: ISettings; // 声明设置
+	appPlugins: any; // 声明插件
+	appWorkspace: Workspace; // 声明工作空间
+	helper: Helper; // 声明辅助工具
+	uploader: IUploader; // 声明上传器Uploader
 
 	async onload() {
+		console.log(`%c ${this.manifest.name} %c v${this.manifest.version} `, `padding: 2px; border-radius: 2px 0 0 2px; color: #fff; background: #5B5B5B;`, `padding: 2px; border-radius: 0 2px 2px 0; color: #fff; background: #409EFF;`);
+
+		// 加载工具
+		// @ts-ignore
+		this.appPlugins = this.app.plugins;
+		this.appWorkspace = this.app.workspace;
+		this.helper = new Helper(this.app); // 自定义方法
+
+		// 加载配置
 		await this.loadSettings();
 
-		// Helper
-		this.helper = new Helper(this.app);
-
-		// Setup Uploader
+		// 加载上传器
 		this.setupUploader();
 
-		// Add Custom Icon
-		addIcon("upload", `<svg t="1728792346606" class="icon" viewBox="60 60 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1472" width="120" height="120" fill="#707070"><path d="M384 298.666667h256v85.333333h-170.666667v85.333333h170.666667v85.333334h-170.666667v85.333333h170.666667v85.333333H384V298.666667zM128 213.333333a85.333333 85.333333 0 0 1 85.333333-85.333333h597.333334a85.333333 85.333333 0 0 1 85.333333 85.333333v597.333334a85.333333 85.333333 0 0 1-85.333333 85.333333H213.333333a85.333333 85.333333 0 0 1-85.333333-85.333333V213.333333z m85.333333 0v597.333334h597.333334V213.333333H213.333333z" p-id="1473" data-spm-anchor-id="a313x.search_index.0.i0.54d23a81JCWFR2" class="selected"></path></svg>`);
+		// 添加侧边栏图标
+		// this.addCustomRibbonIcon();
 
-		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon('upload', 'Upload Plugin', (evt: MouseEvent) => {
-			// Called when the user clicks the icon.
-			new Notice('This is a notice!');
-		});
-		// Perform additional things with the ribbon
-		ribbonIconEl.addClass('my-plugin-ribbon-class');
+		// 添加底部状态栏项
+		// this.addCustomStatusBar();
 
-		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
-		const statusBarItemEl = this.addStatusBarItem();
-		statusBarItemEl.setText('Status Bar Text');
-
-		// This adds a simple command that can be triggered anywhere
-		this.addCommand({
-			id: 'open-sample-modal-simple',
-			name: 'Open sample modal (simple)',
-			callback: () => {
-				new UploadModal(this.app).open();
-			}
-		});
-		// This adds an editor command that can perform some operation on the current editor instance
-		this.addCommand({
-			id: 'sample-editor-command',
-			name: 'Sample editor command',
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				console.log(editor.getSelection());
-				editor.replaceSelection('Sample Editor Command');
-			}
-		});
-		// This adds a complex command that can check whether the current state of the app allows execution of the command
-		this.addCommand({
-			id: 'open-sample-modal-complex',
-			name: 'Open sample modal (complex)',
-			checkCallback: (checking: boolean) => {
-				// Conditions to check
-				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
-				if (markdownView) {
-					// If checking is true, we're simply "checking" if the command can be run.
-					// If checking is false, then we want to actually perform the operation.
-					if (!checking) {
-						new UploadModal(this.app).open();
-					}
-
-					// This command will only show up in Command Palette when the check function returns true
-					return true;
-				}
-			}
-		});
-
-		// 注册事件，添加右键菜单项
-		this.registerMenuEvent();
-
+		// 加载设置界面
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new UploadSettingTab(this.app, this));
 
-		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
-		// Using this function will automatically remove the event listener when this plugin is disabled.
-		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-			console.log('click', evt);
-		});
+		// 添加右键菜单事件
+		this.addCustomMenuEvent();
 
-		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+		// 添加命令行
+		// this.addCustomCommand();
+
+		// 添加DOM操作事件
+		// this.addCustomDomEvent();
+
+		// this.addCustomOtherEvent();
 	}
 
 	async onunload() {}
@@ -131,10 +92,10 @@ class UploadPlugin extends Plugin {
 		new Notice('准备上传');
 
 		let content = this.helper.getValue();
+		// @ts-ignore
+		const adapter: FileSystemAdapter = this.app.vault.adapter as FileSystemAdapter;
 
-		const basePath = (
-			this.app.vault.adapter as FileSystemAdapter
-		).getBasePath();
+		const basePath = adapter.getBasePath();
 
 		let imageList: IImage[] = [];
 		const fileArray = this.helper.getAllFiles();
@@ -296,10 +257,60 @@ class UploadPlugin extends Plugin {
 			});
 	}
 
-	// 注册右键菜单事件
-	registerMenuEvent() {
+	// 设置 uploader
+	setupUploader() {
+		try {
+			this.uploader = uploaderBuilder(this.settings);
+		} catch (e) {
+			console.error(`启动 Uploader 失败: ${e}`);
+		}
+	}
+
+	// 添加命令行
+	addCustomCommand() {
+		// This adds a simple command that can be triggered anywhere
+		this.addCommand({
+			id: 'open-sample-modal-simple',
+			name: 'Open sample modal (simple)',
+			callback: () => {
+				new UploadModal(this.app).open();
+			}
+		});
+
+		// This adds an editor command that can perform some operation on the current editor instance
+		this.addCommand({
+			id: 'sample-editor-command',
+			name: 'Sample editor command',
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+				// console.log(editor.getSelection());
+				editor.replaceSelection('Sample Editor Command');
+			}
+		});
+		// This adds a complex command that can check whether the current state of the app allows execution of the command
+		this.addCommand({
+			id: 'open-sample-modal-complex',
+			name: 'Open sample modal (complex)',
+			checkCallback: (checking: boolean) => {
+				// Conditions to check
+				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (markdownView) {
+					// If checking is true, we're simply "checking" if the command can be run.
+					// If checking is false, then we want to actually perform the operation.
+					if (!checking) {
+						new UploadModal(this.app).open();
+					}
+
+					// This command will only show up in Command Palette when the check function returns true
+					return true;
+				}
+			}
+		});
+	}
+
+	// 添加右键菜单事件
+	addCustomMenuEvent() {
 		this.registerEvent(
-			this.app.workspace.on(
+			this.appWorkspace.on(
 				"file-menu",
 				(menu: Menu, file: TFile, source: string, leaf) => {
 					if (source === "canvas-menu") return false;
@@ -307,9 +318,10 @@ class UploadPlugin extends Plugin {
 
 					menu.addItem((item: MenuItem) => {
 						item
-							.setTitle("上传文件")
+							.setTitle("EUpload")
 							.setIcon("upload")
 							.onClick(() => {
+								// @ts-ignore
 								if (!(file instanceof TFile)) {
 									return false;
 								}
@@ -321,14 +333,44 @@ class UploadPlugin extends Plugin {
 		);
 	}
 
-	// 设置 uploader
-	setupUploader() {
-		try {
-			this.uploader = uploaderBuilder(this.settings);
-		} catch (e) {
-			console.log(`启动 Uploader 失败: ${e}`);
-		}
+	// 添加 DOM 事件
+	addCustomDomEvent() {
+		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
+		// Using this function will automatically remove the event listener when this plugin is disabled.
+		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
+			// console.log('click', evt);
+		});
+	}
+
+	// 添加其它
+	addCustomOtherEvent() {
+		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
+		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+	}
+
+	// 添加底部状态栏项
+	addCustomStatusBar() {
+		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
+		const statusBarItemEl = this.addStatusBarItem();
+		statusBarItemEl.setText('Status Bar Text');
+	}
+
+	// 添加左侧图标
+	addCustomRibbonIcon() {
+		const svg = `<svg t="1728792346606" class="icon" viewBox="60 60 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1472" width="120" height="120" fill="#707070"><path d="M384 298.666667h256v85.333333h-170.666667v85.333333h170.666667v85.333334h-170.666667v85.333333h170.666667v85.333333H384V298.666667zM128 213.333333a85.333333 85.333333 0 0 1 85.333333-85.333333h597.333334a85.333333 85.333333 0 0 1 85.333333 85.333333v597.333334a85.333333 85.333333 0 0 1-85.333333 85.333333H213.333333a85.333333 85.333333 0 0 1-85.333333-85.333333V213.333333z m85.333333 0v597.333334h597.333334V213.333333H213.333333z" p-id="1473" data-spm-anchor-id="a313x.search_index.0.i0.54d23a81JCWFR2" class="selected"></path></svg>`;
+
+		// Add Custom Icon
+		addIcon("upload", svg);
+
+		// This creates an icon in the left ribbon.
+		const ribbonIconEl = this.addRibbonIcon('upload', 'EUpload', (evt: MouseEvent) => {
+			// Called when the user clicks the icon.
+			new Notice('This is a notice!');
+		});
+
+		// Perform additional things with the ribbon
+		ribbonIconEl.addClass('my-plugin-ribbon-class');
 	}
 }
 
-export default UploadPlugin;
+export default EUpload;

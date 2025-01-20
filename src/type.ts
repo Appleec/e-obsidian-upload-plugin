@@ -9,6 +9,7 @@ export type SafeAny = any; // eslint-disable-line @typescript-eslint/no-explicit
  * Default settings
  */
 export interface ISettings {
+	locale: any;
 	mode: EUploaderProvider;
 	modes?: any[];
 	lskySetting: ISettingsItem;

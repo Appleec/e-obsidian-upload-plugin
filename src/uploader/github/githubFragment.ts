@@ -27,7 +27,7 @@ class GithubFragment extends Fragment{
 							await plugin.saveSettings();
 						}
 						catch (e) {
-							console.log(e)
+							console.error(e);
 						}
 					})
 			})
@@ -47,7 +47,7 @@ class GithubFragment extends Fragment{
 							await plugin.saveSettings();
 						}
 						catch (e) {
-							console.log(e)
+							console.error(e);
 						}
 					})
 				text.inputEl.rows = 5
@@ -75,7 +75,7 @@ class GithubFragment extends Fragment{
 							await plugin.saveSettings();
 						}
 						catch (e) {
-							console.log(e)
+							console.error(e);
 						}
 					})
 				text.inputEl.rows = 5
@@ -95,7 +95,7 @@ class GithubFragment extends Fragment{
 							await plugin.saveSettings();
 						}
 						catch (e) {
-							console.log(e)
+							console.error(e);
 						}
 					})
 			})
@@ -113,7 +113,7 @@ class GithubFragment extends Fragment{
 							await plugin.saveSettings();
 						}
 						catch (e) {
-							console.log(e)
+							console.error(e);
 						}
 					})
 			})

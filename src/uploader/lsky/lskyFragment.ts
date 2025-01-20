@@ -27,7 +27,7 @@ export class LskyFragment extends Fragment{
 							await plugin.saveSettings();
 						}
 						catch (e) {
-							console.log(e)
+							console.error(e);
 						}
 					})
 			})
@@ -45,7 +45,7 @@ export class LskyFragment extends Fragment{
 							await plugin.saveSettings();
 						}
 						catch (e) {
-							console.log(e)
+							console.error(e);
 						}
 					})
 				text.inputEl.rows = 5
@@ -65,7 +65,7 @@ export class LskyFragment extends Fragment{
 							await plugin.saveSettings();
 						}
 						catch (e) {
-							console.log(e)
+							console.error(e);
 						}
 					})
 				text.inputEl.rows = 5
@@ -86,7 +86,7 @@ export class LskyFragment extends Fragment{
 							await plugin.saveSettings();
 						}
 						catch (e) {
-							console.log(e)
+							console.error(e);
 						}
 					})
 			})
@@ -105,7 +105,7 @@ export class LskyFragment extends Fragment{
 							await plugin.saveSettings();
 						}
 						catch (e) {
-							console.log(e)
+							console.error(e);
 						}
 					})
 			})

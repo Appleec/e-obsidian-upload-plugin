@@ -1,6 +1,7 @@
 // Imports
 import axios from "axios";
 import objectPath from "object-path";
+import { isJSONParse } from '@elinzy/e-utils'
 
 // Class
 import { Uploader } from "../uploader";
@@ -39,7 +40,11 @@ class LskyUploader extends Uploader {
 			axios.post(this.settings.lskySetting.apiURL, formData, {
 				"headers": JSON.parse(this.settings.lskySetting.apiReqHeader)
 			}).then(res => {
-				const url = [this.settings.lskySetting.imgUrlPrefix, objectPath.get(res.data, this.settings.lskySetting.imgUrlPath)].join('')
+				// NOTE: 兼容 `data.pathname` 与 `['data', ''pathname]` 方式
+				const pathStr = isJSONParse(this.settings.lskySetting.imgUrlPath) ?
+					JSON.parse(this.settings.lskySetting.imgUrlPath) :
+					this.settings.lskySetting.imgUrlPath;
+				const url = [this.settings.lskySetting.imgUrlPrefix, objectPath.get(res.data, pathStr)].join('')
 
 				resolve(url)
 			}, err => {
