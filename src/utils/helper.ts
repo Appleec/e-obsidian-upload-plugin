@@ -126,7 +126,9 @@ export default class Helper {
 
 	getBasePath() {
 		// @ts-ignore
-		const adapter: FileSystemAdapter = this.app.vault.adapter as FileSystemAdapter;
+		const adapter = (this.app.vault.adapter instanceof FileSystemAdapter) ?
+			this.app.vault.adapter :
+			this.app.vault.adapter as FileSystemAdapter;
 
 		return (adapter).getBasePath();
 	}
