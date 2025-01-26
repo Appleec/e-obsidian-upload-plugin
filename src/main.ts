@@ -88,87 +88,87 @@ class EUpload extends Plugin {
 
 	// 自定义方法
 	// 右键菜单上传文件
-	async menuUploadFileTest(file: TFile) {
-		new Notice('准备上传');
-
-		let content = this.helper.getValue();
-		// @ts-ignore
-		const adapter: FileSystemAdapter = this.app.vault.adapter as FileSystemAdapter;
-
-		const basePath = adapter.getBasePath();
-
-		let imageList: IImage[] = [];
-		const fileArray = this.helper.getAllFiles();
-
-		for (const match of fileArray) {
-			const imageName = match.name;
-			const encodedUri = match.path;
-
-			const fileName = basename(decodeURI(encodedUri));
-
-			if (file && file.name === fileName) {
-				const abstractImageFile = join(basePath, file.path);
-
-				if (isAssetTypeAnImage(abstractImageFile)) {
-					imageList.push({
-						path: abstractImageFile,
-						name: imageName,
-						source: match.source,
-					});
-				}
-			}
-		}
-
-		if (imageList.length === 0) {
-			new Notice("没有找到文件");
-			return;
-		}
-
-		const fileList = imageList.map(item => item.path);
-		const files = [];
-
-		for (let i = 0; i < fileList.length; i++) {
-			const file = fileList[i];
-			const buffer: Buffer = await new Promise((resolve, reject) => {
-				readFile(file, (err, data) => {
-					if (err) {
-						reject(err);
-					}
-					resolve(data);
-				});
-			});
-			const arrayBuffer = bufferToArrayBuffer(buffer);
-			files.push(new File([arrayBuffer], file));
-		}
-
-		if (files.length === 0) {
-			new Notice("没有找到文件");
-			return;
-		}
-
-		if (!this.uploader) {
-			new Notice("上传配置加载失败，请检查设置");
-			return;
-		}
-
-		// 上传
-		this.uploader.upload(files[0])
-			.then(res => {
-				imageList.map(item => {
-					content = content.replaceAll(
-						item.source,
-						`![](${res})`
-					);
-				});
-
-				this.helper.setValue(content);
-
-				new Notice("上传成功");
-			})
-			.catch(err => {
-				new Notice(`上传失败: ${err}`);
-			});
-	}
+	// async menuUploadFileTest(file: TFile) {
+	// 	new Notice('准备上传');
+	//
+	// 	let content = this.helper.getValue();
+	// 	// @ts-ignore
+	// 	const adapter: FileSystemAdapter = this.app.vault.adapter as FileSystemAdapter;
+	//
+	// 	const basePath = adapter.getBasePath();
+	//
+	// 	let imageList: IImage[] = [];
+	// 	const fileArray = this.helper.getAllFiles();
+	//
+	// 	for (const match of fileArray) {
+	// 		const imageName = match.name;
+	// 		const encodedUri = match.path;
+	//
+	// 		const fileName = basename(decodeURI(encodedUri));
+	//
+	// 		if (file && file.name === fileName) {
+	// 			const abstractImageFile = join(basePath, file.path);
+	//
+	// 			if (isAssetTypeAnImage(abstractImageFile)) {
+	// 				imageList.push({
+	// 					path: abstractImageFile,
+	// 					name: imageName,
+	// 					source: match.source,
+	// 				});
+	// 			}
+	// 		}
+	// 	}
+	//
+	// 	if (imageList.length === 0) {
+	// 		new Notice("没有找到文件");
+	// 		return;
+	// 	}
+	//
+	// 	const fileList = imageList.map(item => item.path);
+	// 	const files = [];
+	//
+	// 	for (let i = 0; i < fileList.length; i++) {
+	// 		const file = fileList[i];
+	// 		const buffer: Buffer = await new Promise((resolve, reject) => {
+	// 			readFile(file, (err, data) => {
+	// 				if (err) {
+	// 					reject(err);
+	// 				}
+	// 				resolve(data);
+	// 			});
+	// 		});
+	// 		const arrayBuffer = bufferToArrayBuffer(buffer);
+	// 		files.push(new File([arrayBuffer], file));
+	// 	}
+	//
+	// 	if (files.length === 0) {
+	// 		new Notice("没有找到文件");
+	// 		return;
+	// 	}
+	//
+	// 	if (!this.uploader) {
+	// 		new Notice("上传配置加载失败，请检查设置");
+	// 		return;
+	// 	}
+	//
+	// 	// 上传
+	// 	this.uploader.upload(files[0])
+	// 		.then(res => {
+	// 			imageList.map(item => {
+	// 				content = content.replaceAll(
+	// 					item.source,
+	// 					`![](${res})`
+	// 				);
+	// 			});
+	//
+	// 			this.helper.setValue(content);
+	//
+	// 			new Notice("上传成功");
+	// 		})
+	// 		.catch(err => {
+	// 			new Notice(`上传失败: ${err}`);
+	// 		});
+	// }
 
 	async menuUploadFile(file: TFile) {
 		if (!file) {
@@ -269,42 +269,43 @@ class EUpload extends Plugin {
 	// 添加命令行
 	addCustomCommand() {
 		// This adds a simple command that can be triggered anywhere
-		this.addCommand({
-			id: 'open-sample-modal-simple',
-			name: 'Open sample modal (simple)',
-			callback: () => {
-				new UploadModal(this.app).open();
-			}
-		});
+		// this.addCommand({
+		// 	id: 'open-sample-modal-simple',
+		// 	name: 'Open sample modal (simple)',
+		// 	callback: () => {
+		// 		new UploadModal(this.app).open();
+		// 	}
+		// });
 
 		// This adds an editor command that can perform some operation on the current editor instance
-		this.addCommand({
-			id: 'sample-editor-command',
-			name: 'Sample editor command',
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				// console.log(editor.getSelection());
-				editor.replaceSelection('Sample Editor Command');
-			}
-		});
-		// This adds a complex command that can check whether the current state of the app allows execution of the command
-		this.addCommand({
-			id: 'open-sample-modal-complex',
-			name: 'Open sample modal (complex)',
-			checkCallback: (checking: boolean) => {
-				// Conditions to check
-				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
-				if (markdownView) {
-					// If checking is true, we're simply "checking" if the command can be run.
-					// If checking is false, then we want to actually perform the operation.
-					if (!checking) {
-						new UploadModal(this.app).open();
-					}
+		// this.addCommand({
+		// 	id: 'sample-editor-command',
+		// 	name: 'Sample editor command',
+		// 	editorCallback: (editor: Editor, view: MarkdownView) => {
+		// 		// console.log(editor.getSelection());
+		// 		editor.replaceSelection('Sample Editor Command');
+		// 	}
+		// });
 
-					// This command will only show up in Command Palette when the check function returns true
-					return true;
-				}
-			}
-		});
+		// This adds a complex command that can check whether the current state of the app allows execution of the command
+		// this.addCommand({
+		// 	id: 'open-sample-modal-complex',
+		// 	name: 'Open sample modal (complex)',
+		// 	checkCallback: (checking: boolean) => {
+		// 		// Conditions to check
+		// 		const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
+		// 		if (markdownView) {
+		// 			// If checking is true, we're simply "checking" if the command can be run.
+		// 			// If checking is false, then we want to actually perform the operation.
+		// 			if (!checking) {
+		// 				new UploadModal(this.app).open();
+		// 			}
+		//
+		// 			// This command will only show up in Command Palette when the check function returns true
+		// 			return true;
+		// 		}
+		// 	}
+		// });
 	}
 
 	// 添加右键菜单事件
@@ -345,7 +346,7 @@ class EUpload extends Plugin {
 	// 添加其它
 	addCustomOtherEvent() {
 		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+		// this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
 	}
 
 	// 添加底部状态栏项
@@ -369,7 +370,7 @@ class EUpload extends Plugin {
 		});
 
 		// Perform additional things with the ribbon
-		ribbonIconEl.addClass('my-plugin-ribbon-class');
+		// ribbonIconEl.addClass('my-plugin-ribbon-class');
 	}
 }
 
