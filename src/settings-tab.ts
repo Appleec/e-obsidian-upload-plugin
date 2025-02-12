@@ -32,7 +32,7 @@ class UploadSettingsTab extends PluginSettingTab {
 		containerEl.empty();
 
 		// Set title
-		containerEl.createEl("h1", { text: "上传设置" });
+		containerEl.createEl("h1", { text: "EUpload" });
 
 		// Choice the mode
 		const pick = new Setting(containerEl)

@@ -1,6 +1,6 @@
 // Imports
-import objectPath from "object-path";
 import { requestUrl } from "obsidian";
+import { isJSONParse, get } from "@elinzy/e-utils";
 
 // Class
 import { Uploader } from "../uploader";
@@ -28,9 +28,11 @@ class HaloUploader extends Uploader {
 	 */
 	async upload(file: File): Promise<string> {
 		return new Promise(async (resolve, reject) => {
-			const uploadBody = JSON.parse(this.settings.haloSetting.apiReqBody);
-
 			const formItems = new FormDataFormat();
+			const uploadBody = isJSONParse(this.settings.haloSetting.apiReqBody) ?
+				JSON.parse(this.settings.haloSetting.apiReqBody) :
+				this.settings.haloSetting.apiReqBody;
+
 			for (const key in uploadBody) {
 				if (uploadBody[key] == "$FILE") {
 					formItems.append(key, file)
@@ -57,9 +59,12 @@ class HaloUploader extends Uploader {
 			})
 				.then(res => res.json)
 				.then((res: {}) => {
+					const pathStr = isJSONParse(this.settings.haloSetting.imgUrlPath) ?
+						JSON.parse(this.settings.haloSetting.imgUrlPath) :
+						this.settings.haloSetting.imgUrlPath;
 					const url = [
 						this.settings.haloSetting.imgUrlPrefix,
-						objectPath.get(res, JSON.parse(this.settings.haloSetting.imgUrlPath))
+						get(res, pathStr, ''),
 					].join('');
 
 					resolve(url)

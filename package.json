@@ -33,7 +33,7 @@
     "vitepress": "^1.4.1"
   },
   "dependencies": {
-    "@elinzy/e-utils": "^0.4.4",
+    "@elinzy/e-utils": "^0.4.8",
     "axios": "^1.7.7",
     "i18next": "^24.2.1"
   },

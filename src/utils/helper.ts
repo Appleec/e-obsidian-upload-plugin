@@ -130,6 +130,6 @@ export default class Helper {
 			this.app.vault.adapter :
 			this.app.vault.adapter as FileSystemAdapter;
 
-		return (adapter).getBasePath();
+		return adapter.getBasePath && adapter.getBasePath() || '';
 	}
 }
