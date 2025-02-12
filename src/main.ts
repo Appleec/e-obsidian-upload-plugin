@@ -1,7 +1,7 @@
 // Imports
 import {
-	Editor,
-	MarkdownView,
+	// Editor,
+	// MarkdownView,
 	Notice,
 	Plugin,
 	Menu,
@@ -21,7 +21,7 @@ import { isAssetTypeAnImage, bufferToArrayBuffer } from "./utils/utils";
 
 // Class
 import UploadSettingTab from './settings-tab';
-import UploadModal from './modal';
+// import UploadModal from './modal';
 import uploaderBuilder from './uploader/builder';
 
 // Types

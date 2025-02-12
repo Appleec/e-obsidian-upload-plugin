@@ -1,12 +1,12 @@
 // Imports
-import objectPath from "object-path";
-import path from "path";
 import { requestUrl } from "obsidian";
+import path from "path";
 
 // Class
 import { Uploader } from "../uploader";
 
 // Utils
+import { get } from "@elinzy/e-utils";
 import { fileToBase64, getRandomFileName } from "../../utils/utils";
 
 // Types
@@ -68,7 +68,7 @@ class GithubUploader extends Uploader {
 				.then((res: {}) => {
 					const url = [
 						this.settings.githubSetting.imgUrlPrefix,
-						objectPath.get(res, JSON.parse(this.settings.githubSetting.imgUrlPath))
+						get(res, JSON.parse(this.settings.githubSetting.imgUrlPath), ''),
 					].join('');
 
 					resolve(url)
